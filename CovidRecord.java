@@ -28,18 +28,18 @@ public class CovidRecord
      *         pCumulativeRecovered (int), pCurrentlyPositive (int), pHospitalized (int), 
      *         pIntensiveCare (int), pCountry (Country)
      * EXPORT: none
-     * ASSERTION: Creates a CovidRecord object with imported values
+     * ASSERTION: Creates a CovidRecord object with imported values and validates the values
      */
     public CovidRecord(String pDate, int pCumulativePositive, int pCumulativeDeceased, int pCumulativeRecovered, int pCurrentlyPositive, int pHospitalized, int pIntensiveCare, Country pCountry)
     {
-        date = pDate;
-        cumulativePositive = pCumulativePositive;
-        cumulativeDeceased = pCumulativeDeceased;
-        cumulativeRecovered = pCumulativeRecovered;
-        currentlyPositive = pCurrentlyPositive;
-        hospitalized = pHospitalized;
-        intensiveCare = pIntensiveCare;
-        country = pCountry;
+        setDate(pDate);
+        setCumulativePositive(pCumulativePositive);
+        setCumulativeDeceased(pCumulativeDeceased);
+        setCumulativeRecovered(pCumulativeRecovered);
+        setCurrentlyPositive(pCurrentlyPositive);
+        setHospitalized(pHospitalized);
+        setIntensiveCare(pIntensiveCare);
+        setCountry(pCountry);
     }
 
     /**
@@ -160,11 +160,12 @@ public class CovidRecord
      * ACCESSOR: getCountry
      * IMPORT: none
      * EXPORT: country (Country)
-     * ASSERTION: Returns the Country object of the CovidRecord object
+     * ASSERTION: Returns a copy of the aggregated Country object of the CovidRecord object
      */
     public Country getCountry()
     {
-        return country;
+        Country tempCountry = new Country(country);
+        return tempCountry;
     }
 
     /**
@@ -200,14 +201,14 @@ public class CovidRecord
         if (inObject instanceof CovidRecord)
         {
             inCovidRecord = (CovidRecord) inObject;
-            if (date.equals(inCovidRecord.getDate()) &&
-                cumulativePositive == inCovidRecord.getCumulativePositive() &&
-                cumulativeDeceased == inCovidRecord.getCumulativeDeceased() &&
-                cumulativeRecovered == inCovidRecord.getCumulativeRecovered() &&
-                currentlyPositive == inCovidRecord.getCurrentlyPositive() &&
-                hospitalized == inCovidRecord.getHospitalized() &&
-                intensiveCare == inCovidRecord.getIntensiveCare() &&
-                country.equals(inCovidRecord.getCountry()))
+            if ((date.equals(inCovidRecord.getDate())) &&
+                (cumulativePositive == inCovidRecord.getCumulativePositive()) &&
+                (cumulativeDeceased == inCovidRecord.getCumulativeDeceased()) &&
+                (cumulativeRecovered == inCovidRecord.getCumulativeRecovered()) &&
+                (currentlyPositive == inCovidRecord.getCurrentlyPositive()) &&
+                (hospitalized == inCovidRecord.getHospitalized()) &&
+                (intensiveCare == inCovidRecord.getIntensiveCare()) &&
+                (country.equals(inCovidRecord.getCountry())))
             {
                 isEqual = true;
             }
@@ -224,7 +225,7 @@ public class CovidRecord
      */
     public void setDate(String pDate)
     {
-        if (isDateValidOne(pDate) != true && isDateValidTwo(pDate) != true) // Invalid if both formats are incorrect
+        if ((firstValidateDate(pDate) != true) && (secondValidateDate(pDate) != true)) // Invalid if both formats are incorrect
         {
             throw new IllegalArgumentException("Invalid date format.");
         }
@@ -364,12 +365,12 @@ public class CovidRecord
 
     // Internal methods (private)
     /**
-     * METHOD: isDateValidOne
+     * METHOD: firstValidateDate
      * IMPORT: date (String)
      * EXPORT: isValid (Boolean)
      * ASSERTION: Returns true if String date is valid for dd/m/yyyy format
      */
-    private boolean isDateValidOne(String date) 
+    private boolean firstValidateDate(String date) 
     {
         String firstDateFormat = "dd/M/yyyy";
         boolean isValid = false;
@@ -388,12 +389,12 @@ public class CovidRecord
     }
 
     /**
-     * METHOD: isDateValidTwo
+     * METHOD: secondValidateDate
      * IMPORT: date (String)
      * EXPORT: isValid (Boolean)
      * ASSERTION: Returns true if String date is valid for dd/mm/yyyy format
      */
-    private boolean isDateValidTwo(String date) 
+    private boolean secondValidateDate(String date) 
     {
         String secondDateFormat = "dd/MM/yyyy";
         boolean isValid = false;

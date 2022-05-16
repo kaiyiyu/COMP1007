@@ -15,7 +15,7 @@ public class Country
     private String countryName;
     private String nuts;
     private double latitude;
-    private double longitude; // variable name completed since long is an invalid variable name
+    private double longitude; // Variable name completed since long is an invalid variable name
     
     // Constructors
     /**
@@ -23,16 +23,16 @@ public class Country
      * IMPORT: pIso3 (String), pContinent (String), pCountryName (String), pNuts (String), 
      *         pLatitude (double), pLongitude (double)
      * EXPORT: none
-     * ASSERTION: Creates a Country object with imported values
+     * ASSERTION: Creates a Country object with imported values and validates the values
      */
     public Country(String pIso3, String pContinent, String pCountryName, String pNuts, double pLatitude, double pLongitude)
     {
-        iso3 = pIso3;
-        continent = pContinent;
-        countryName = pCountryName;
-        nuts = pNuts;
-        latitude = pLatitude;
-        longitude = pLongitude;
+        setIso3(pIso3);
+        setContinent(pContinent);
+        setCountryName(pCountryName);
+        setNuts(pNuts);
+        setLatitude(pLatitude);
+        setLongitude(pLongitude);
     }
 
     /**
@@ -165,12 +165,12 @@ public class Country
         if (inObject instanceof Country)
         {
             inCountry = (Country) inObject;
-            if (iso3.equals(inCountry.getIso3()) &&
-                continent.equals(inCountry.getContinent()) &&
-                countryName.equals(inCountry.getCountryName()) &&
-                nuts.equals(inCountry.getNuts()) &&
-                latitude == inCountry.getLatitude() &&
-                longitude == inCountry.getLongitude())
+            if ((iso3.equals(inCountry.getIso3())) &&
+                (continent.equals(inCountry.getContinent())) &&
+                (countryName.equals(inCountry.getCountryName())) &&
+                (nuts.equals(inCountry.getNuts())) &&
+                (latitude == inCountry.getLatitude()) &&
+                (longitude == inCountry.getLongitude()))
             {
                 isEqual = true;
             }
@@ -223,7 +223,7 @@ public class Country
      */
     public void setCountryName(String pCountryName) 
     {
-        if (pCountryName == null || pCountryName.isEmpty()) // Generally check null for Strings
+        if ((pCountryName == null) || (pCountryName.isEmpty())) // Generally check null for Strings
         {
             throw new IllegalArgumentException("Country name cannot be null or empty.");
         }
@@ -241,11 +241,11 @@ public class Country
      */
     public void setNuts(String pNuts)
     {
-        if (pNuts != null && pNuts.length() != 2) // Nuts is given but invalid format
-        {
-            throw new IllegalArgumentException("Nuts format must be 2 characters long.");
+        if (((!pNuts.equals("NONE"))) && (pNuts.length() != 2)) // Based on NUTS codes
+        {   
+            throw new IllegalArgumentException("NUTS format must be NONE or 2 characters long.");
         }
-        else    // Empty nuts code of a country can still be valid
+        else    // NONE is valid since some countries do not have NUTS codes
         {
             nuts = pNuts;
         }
@@ -259,7 +259,7 @@ public class Country
      */
     public void setLatitude(double pLatitude)
     {
-        if (pLatitude < -90 || pLatitude > 90)
+        if ((pLatitude < -90.0) || (pLatitude > 90.0))
         {
             throw new IllegalArgumentException("Latitude must be between -90 and 90.");
         }
@@ -277,7 +277,7 @@ public class Country
      */
     public void setLongitude(double pLongitude)
     {
-        if (pLongitude < -180 || pLongitude > 180)
+        if ((pLongitude < -180.0) || (pLongitude > 180.0))
         {
             throw new IllegalArgumentException("Longitude must be between -180 and 180.");
         }
