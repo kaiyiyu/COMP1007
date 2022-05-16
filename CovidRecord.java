@@ -361,8 +361,6 @@ public class CovidRecord
         }
     }
 
-    // Doing methods (public)
-
     // Internal methods (private)
     /**
      * METHOD: firstValidateDate

@@ -286,8 +286,4 @@ public class Country
             longitude = pLongitude;
         }
     }
-
-    // Doing methods (public)
-
-    // Internal methods (private)
 } // End of Country class
