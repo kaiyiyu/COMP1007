@@ -1,6 +1,583 @@
--------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
 Author: Kai-Yu Yu
-Purpose: Pseudocode for CovidAnalysis
+Purpose: Pseudocode FOR CovidAnalysis
 Date: 14/05/2022
--------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
 BEGIN CovidAnalysis
+    -------------------------------------------------------------------------------------------------------------------------
+    MAIN:
+
+        CovidRecord[] allRecords = CovidRecord[numOfAllRecords]
+        String fileName = "jrc-covid-19-all-days-of-world_ASSIGNMENT-FIXED.csv"
+        String group = ""
+        int numOfAllRecords
+        int selection
+        
+        numOfAllRecords = readFile(fileName)
+        loadData(fileName, allRecords)
+
+        TRY 
+            SCANNER input
+            DO
+                OUTPUT "***************************************************************************" +
+                        "|    Welcome to the JRC COVID-19 Analysis Program. There are a total of   |" +
+                        "|  ‘%d’ records loaded. Please make a selection from the Menu below to  |" +
+                        "|                  choose which area (or date) to analyse:                |" +
+                        "***************************************************************************" +
+                        "> 1. All countries" +
+                        "> 2. Countries in South America" +
+                        "> 3. Countries in North America" +
+                        "> 4. Countries in Oceania" +
+                        "> 5. Countries in Asia" +
+                        "> 6. Countries in Africa" +
+                        "> 7. Countries in Europe" +
+                        "> 8. Enter a Country" +
+                        "> 9. Enter a Date" +
+                        "> 10. Exit the Program" +
+                        "Enter selection: ", numOfAllRecords)
+                INPUT selection
+
+                input.nextLine()   
+                resetVisited(allRecords) 
+                group = "All Countries"
+                
+                CASE selection
+                    1: 
+                        promptSecondMenu(input, numOfAllRecords, group, allRecords)
+                    2: 3: 4: 5: 6: 7:
+                        filterByContinent(input, selection, group, allRecords)
+                    8:
+                        filterByCountry(input, group, allRecords)
+                    9:
+                        filterByDate(input, group, allRecords)
+                    10:
+                        OUTPUT "Thank you FOR using the JRC COVID-19 Analysis Program!"
+                    DEFAULT:
+                        OUTPUT "Invalid selection. Please re-enter a number from 1 to 10."
+                WHILE selection != 10    
+
+            CLOSE input
+            
+        CATCH EXCEPTION Input Mismatch Exception as exception
+            OUTPUT "Invalid menu selection"
+    END MAIN
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: promptSecondMenu
+    IMPORT: pInput (Scanner), pNumofRecords (int), pGroup (String), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Prompts user to enter second menu selection then calls the appropriate method to get statistic
+               and RETURNs to the first menu selection when done
+    ALGORITHM: 
+        int selection
+        boolean validSelection = true
+                        
+        TRY
+            DO 
+                OUTPUT "Please select from a statistic below:" +
+                       "> 1. Total number of cumulatively positive cases" +
+                       "> 2. Total number of cumulatively deceased cases" +
+                       "> 3. Total number of cumulatively recovered cases" +
+                       "> 4. Average daily number of currently positive cases" +
+                       "> 5. Number and percentage of cumulatively positive cases recovered" +
+                       "> 6. Number and percentage of cumulatively positive cases deceased" +
+                       "> 7. All of the above statistics" +
+                       "Enter selection: "
+                INPUT selection
+
+                CASE selection
+                    1:
+                        calcCumulativePositive(pGroup, pRecords)
+                    2:
+                        calcCumulativeDeceased(pGroup, pRecords)
+                    3:
+                        calcCumulativeRecovered(pGroup, pRecords)
+                    4:
+                        calcAverageDaily(pGroup, pNumOfRecords, pRecords)
+                    5:
+                        calcPercentageRecovered(pGroup, pRecords)
+                    6:
+                        calcPercentageDeceased(pGroup, pRecords)
+                    7:
+                        calcAllStatistics(pGroup, pNumOfRecords, pRecords)
+                    DEFAULT:
+                        OUTPUT "Invalid selection. Please re-enter a number from 1 to 7."
+                        validSelection = false
+                WHILE NOT validSelection
+        
+        CATCH EXCEPTION Input Mismatch Exception as exception 
+            OUTPUT "Invalid menu selection"
+    END promptMenuPerCountry
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: resetVisited
+    IMPORT: pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Resets the visited status in each CovidRecord object in the array to false
+    ALGORITHM: 
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            pRecords[i].setVisited(false)
+    END resetVisited
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: readFile
+    IMPORT: pFileName (String)
+    EXPORT: lineNum (int)
+    ASSERTION: Reads a file to get record size and CATCH EXCEPTIONes errors IF file cannot be opened/found
+    ALGORITHM: 
+        FileInputStream fileStream = NULL
+        InputStreamReader isr
+        BufferedReader bufRdr
+        int lineNum = 0
+        String line
+        
+        TRY
+            fileStream = FileInputStream(pFileName)
+            isr = InputStreamReader(fileStream)
+            bufRdr = BufferedReader(isr)
+            bufRdr.readLine()
+            line = bufRdr.readLine()
+
+            WHILE (line != NULL) 
+                INCREMENT lineNum BY 1
+                line = bufRdr.readLine()
+            
+            CLOSE fileStream
+        
+        CATCH EXCEPTION IO Exception as errorDetails
+            IF (fileStream != NULL) THEN  
+                TRY    
+                    CLOSE fileStream
+                
+                CATCH EXCEPTION IO Exception as ex2
+                    OUTPUT "ERROR"
+            
+            OUTPUT "ERROR"
+        
+        RETURN lineNum
+    END readFile
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: loadData
+    IMPORT: pFileName (String), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Reads a file and loads data to created CovidRecord objects
+               in an array of objects
+    ALGORITHM: 
+        FileInputStream fileStream = NULL
+        InputStreamReader isr
+        BufferedReader bufRdr
+        int lineNum = 0
+        String line
+        
+        TRY
+            fileStream = FileInputStream(pFileName)
+            isr = InputStreamReader(fileStream)
+            bufRdr = BufferedReader(isr)
+            bufRdr.readLine()
+            line = bufRdr.readLine()
+
+            WHILE (line != NULL) 
+                processLine(line, pRecords, lineNum)
+                INCREMENT lineNum BY 1
+                line = bufRdr.readLine()
+            
+            CLOSE fileStream
+        
+        CATCH EXCEPTION IO Exception as errorDetails
+            IF (fileStream != NULL) THEN
+                TRY
+                    CLOSE fileStream
+                    
+                CATCH EXCEPTION IO Exception as ex2
+                    OUTPUT "ERROR"
+                
+            OUTPUT "ERROR"
+    END loadData
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: processLine
+    IMPORT: pLine (String), pRecords (CovidRecord[]), pLineNum (int)
+    EXPORT: none
+    ASSERTION: 
+    ALGORITHM: 
+        String[] splitLine
+        splitLine = csvRow.split(",", -1)
+        int lineLength = splitLine.length
+
+        FOR (int i = 0 TO LENGTH OF line CHANGEBY 1)
+            IF (splitLine[i].equals("")) THEN
+                IF (i == lineLength - 1) THEN
+                    splitLine[i] = "NONE"
+                ELSE
+                    splitLine[i] = "0"
+                
+        String iso3 = splitLine[1]
+        String continent = splitLine[2]
+        String countryName = splitLine[3] TO UPPERCASE
+        String nuts = splitLine[12]
+        double latitude = PARSE DOUBLE (splitLine[4])     
+        double longitude = PARSE DOUBLE (splitLine[5])    
+        Country country = Country(iso3, continent, countryName, nuts, latitude, longitude)
+
+        String date = splitLine[0]
+        int cumulativePositive = PARSE INTEGER (splitLine[6])
+        int cumulativeDeceased = PARSE INTEGER (splitLine[7])
+        int cumulativeRecovered = PARSE INTEGER (splitLine[8])
+        int currentlyPositive = PARSE INTEGER (splitLine[9])
+        int hospitalized = PARSE INTEGER (splitLine[10])
+        int intensiveCare = PARSE INTEGER (splitLine[11])
+        CovidRecord record = CovidRecord(date, cumulativePositive, cumulativeDeceased, cumulativeRecovered, currentlyPositive, hospitalized, intensiveCare, country)
+        
+        pRecords[pLineNum] = record
+    END processLine
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: filterByContinent
+    IMPORT: pInput (Scanner), pSelection (int), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Fills an array with CovidRecord objects of countries in a continent then passes the 
+               array to the second menu selection FOR data analysis
+    ALGORITHM: 
+        CovidRecord[] continentRecords
+        int numOfContinentRecords = 0
+        int continentArrayIndex = 0
+        String continentCode = ""
+
+        IF (pSelection == 2) THEN
+            continentCode = "SA"
+            pGroup = "South America"
+        ELSE IF (pSelection == 3) THEN
+            continentCode = "NA"
+            pGroup = "North America"
+        ELSE IF (pSelection == 4) THEN
+            continentCode = "OC"
+            pGroup = "Oceania"
+        ELSE IF (pSelection == 5) THEN
+            continentCode = "AS"
+            pGroup = "Asia"
+        ELSE IF (pSelection == 6) THEN
+            continentCode = "AF"
+            pGroup = "Africa"
+        ELSE
+            continentCode = "EU"
+            pGroup = "Europe"
+        
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            IF (pRecords[i].getCountry().getContinent().equals(continentCode)) THEN
+                INCREMENT numOfContinentRecords BY 1
+            
+        continentRecords = CovidRecord[numOfContinentRecords]
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            IF (pRecords[i].getCountry().getContinent().equals(continentCode)) THEN
+                continentRecords[continentArrayIndex] = pRecords[i]
+                INCREMENT continentArrayIndex BY 1
+            
+        promptSecondMenu(pInput, numOfContinentRecords, pGroup, continentRecords)
+    END filterByContinent
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: filterByCountry
+    IMPORT: pInput (Scanner), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Fills an array with CovidRecord objects of countries with given country name then passes           
+               the array to the second menu selection FOR data analysis. IF user enters a country name
+               or valid String input not in the array, the user is sent back to the first menu selection.
+               An invalid input type will throw an exception and program will terminate.
+    ALGORITHM: 
+        CovidRecord[] countryRecords
+        int numOfCountryRecords = 0
+        int countryArrayIndex = 0
+        String countryName = ""
+
+        TRY
+            OUTPUT "Enter the name of a country: "               
+            INPUT countryName
+            pGroup = countryName
+        
+        CATCH EXCEPTION Input Mismatch Exception as exception
+            OUTPUT "Invalid country name input"
+        
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            IF (pRecords[i].getCountry().getCountryName().equals(countryName TO UPPERCASE)) THEN
+                INCREMENT numOfCountryRecords BY 1
+            
+        IF (numOfCountryRecords == 0) THEN
+            OUTPUT "No records found for country name"
+        ELSE
+            countryRecords = CovidRecord[numOfCountryRecords]
+            FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+                IF (pRecords[i].getCountry().getCountryName().equals(countryName TO UPPERCASE)) THEN
+                    countryRecords[countryArrayIndex] = pRecords[i]
+                    INCREMENT countryArrayIndex BY 1
+
+            promptSecondMenu(pInput, numOfCountryRecords, pGroup, countryRecords)
+    END filterByCountry
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: filterByDate
+    IMPORT: pInput (Scanner), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Fills an array with CovidRecord objects of countries in a date range then passes           
+    the array to the second menu selection FOR data analysis. IF user enters a date
+            or valid String input not in the array, the user is sent back to the first menu selection.
+            An invalid input type will throw an exception and program will terminate.
+    ALGORITHM:
+        CovidRecord[] dateRecords
+        int numOfDateRecords = 0
+        int dateArrayIndex = 0
+        String date = ""
+
+        TRY
+            OUTPUT ("Enter the date (dd/MM/yyyy or dd/MM/yyyy): ")               
+            INPUT date
+            pGroup = date
+        
+        CATCH EXCEPTION Input Mismatch Exception as exception
+            OUTPUT "Invalid date input" 
+
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            IF (pRecords[i].getDate().equals(date)) THEN
+                INCREMENT numOfDateRecords BY 1
+            
+        IF (numOfDateRecords == 0) THEN
+            OUTPUT "No records found for date"
+        ELSE
+            dateRecords = CovidRecord[numOfDateRecords]
+            
+            FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+                IF (pRecords[i].getDate().equals(date)) THEN
+                    dateRecords[dateArrayIndex] = pRecords[i]
+                    INCREMENT dateArrayIndex BY 1
+
+            promptSecondMenu(pInput, numOfDateRecords, pGroup, dateRecords)
+    END filterByDate
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcCumulativePositive
+    IMPORT: pGroup (String), pRecords (CovidRecord[])
+    EXPORT: totalCumulativePositive (int)
+    ASSERTION: Calculates the cumulative positive cases FOR a given group of CovidRecord objects, prints out the
+               appropriate message, and RETURNs the total cumulative positive cases FOR other methods to use
+    ALGORITHM: 
+        String currentCountry
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCumulativePositive = 0
+        int currentHighest = 0    
+
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            currentCountry =  pRecords[i].getCountry().getCountryName()
+            currentHighest = pRecords[i].getCumulativePositive()
+
+            IF (NOT pRecords[i].getVisited()) THEN  
+
+                FOR (int j = i + 1 TO LENGTH OF pRecords INCREMENT BY 1)
+
+                    IF (pRecords[j].getCountry().getCountryName().equals(currentCountry)) THEN
+                        pRecords[j].setVisited(true)
+
+                        IF (pRecords[j].getCumulativePositive() >= currentHighest) THEN
+                            currentHighest = pRecords[j].getCumulativePositive()
+                        
+            IF (currentCountry.equals(upperCaseGroup)) THEN
+                totalCumulativePositive = currentHighest   
+            ELSE
+                totalCumulativePositive += currentHighest
+            
+        IF (totalCumulativePositive == 0) THEN
+           OUTPUT "Total Cumulative Positive: NO RECORDS FOUND."
+        ELSE 
+           OUTPUT "Total Cumulative Positive: totalCumulativePositive"
+        
+        RETURN totalCumulativePositive
+    END of calcCumulativePositive
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcCumulativeDeceased
+    IMPORT: pGroup (String), pRecords (CovidRecord[])
+    EXPORT: totalCumulativeDeceased (int)
+    ASSERTION: Calculates the cumulative deceased cases FOR a given group of CovidRecord objects, prints out the
+               appropriate message, and RETURNs the total cumulative deceased cases FOR other methods to use
+    ALGORITHM: 
+        String currentCountry
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCumulativeDeceased = 0
+        int currentHighest = 0  
+    
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            currentCountry =  pRecords[i].getCountry().getCountryName()
+            currentHighest = pRecords[i].getCumulativeDeceased()
+
+            IF (NOT pRecords[i].getVisited()) THEN
+
+                FOR (int j = i + 1 TO LENGTH OF pRecords INCREMENT BY 1)
+
+                    IF (pRecords[j].getCountry().getCountryName().equals(currentCountry)) THEN
+                        pRecords[j].setVisited(true)
+
+                        IF (pRecords[j].getCumulativeDeceased() >= currentHighest) THEN
+                            currentHighest = pRecords[j].getCumulativeDeceased()
+
+            IF (currentCountry.equals(upperCaseGroup)) THEN
+                totalCumulativeDeceased = currentHighest   
+            ELSE
+                totalCumulativeDeceased += currentHighest
+
+        IF (totalCumulativeDeceased == 0) THEN
+           OUTPUT "Total Cumulative Deceased: NO RECORDS FOUND."
+        ELSE 
+           OUTPUT "Total Cumulative Deceased: totalCumulativeDeceased"
+    
+        RETURN totalCumulativeDeceased
+    END of calcCumulativeDeceased
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcCumulativeRecovered
+    IMPORT: pGroup (String), pRecords (CovidRecord[])
+    EXPORT: totalCumulativeRecovered (int)
+    ASSERTION: Calculates the cumulative recovered cases FOR a given group of CovidRecord objects, prints out the
+               appropriate message, and RETURNs the total cumulative recovered cases FOR other methods to use
+    ALGORITHM: 
+        String currentCountry
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCumulativeRecovered = 0
+        int currentHighest = 0     
+
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            currentCountry =  pRecords[i].getCountry().getCountryName()
+            currentHighest = pRecords[i].getCumulativeRecovered()
+
+            IF (NOT pRecords[i].getVisited()) THEN
+
+                FOR (int j = i + 1 TO LENGTH OF pRecords INCREMENT BY 1)
+                
+                    IF (pRecords[j].getCountry().getCountryName().equals(currentCountry)) THEN
+                        pRecords[j].setVisited(true)
+
+                        IF (pRecords[j].getCumulativeRecovered() >= currentHighest) THEN
+                            currentHighest = pRecords[j].getCumulativeRecovered()
+
+            IF (currentCountry.equals(upperCaseGroup)) THEN
+                totalCumulativeRecovered = currentHighest   
+            ELSE
+                totalCumulativeRecovered += currentHighest
+            
+        IF (totalCumulativeRecovered == 0) THEN
+           OUTPUT "Total Cumulative Recovered: NO RECORDS FOUND."
+        ELSE 
+           OUTPUT "Total Cumulative Recovered: totalCumulativeRecovered"
+        
+        RETURN totalCumulativeRecovered 
+    END of calcCumulativeRecovered
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcAverageDaily
+    IMPORT: pGroup (String), pNumOfRecords (int), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Calculates the average daily cases FOR a given group of CovidRecord objects by dividing the 
+               total currently positive cases by the number of records available in the array, then prints out the
+               appropriate message
+                 
+               The program assumes that currently positive cases of a country is similar to the total cumulative
+               positive, deceased, and recovered cases wherein the latest record is the number to be used FOR
+               these calculations. FOR example in Australia,
+               Most Recent Record: 30/11/2021
+               Number of Country Records: 9
+               Currently Positive: 207145
+               Computation FOR Daily Average: (207145 / 9) = 23,016
+    ALGORITHM: 
+        String currentCountry
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCurrentlyPositive = 0
+        int currentHighest = 0
+        int averageDaily     
+
+        FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
+            currentCountry =  pRecords[i].getCountry().getCountryName()
+            currentHighest = pRecords[i].getCurrentlyPositive()
+
+            IF (!(pRecords[i].getVisited())) THEN
+
+                FOR (int j = i + 1 TO LENGTH OF pRecords INCREMENT BY 1)
+            
+                    IF (pRecords[j].getCountry().getCountryName().equals(currentCountry)) THEN
+                        pRecords[j].setVisited(true)
+
+                        IF (pRecords[j].getCurrentlyPositive() >= currentHighest) THEN
+                            currentHighest = pRecords[j].getCurrentlyPositive()
+                        
+            IF (currentCountry.equals(upperCaseGroup)) THEN
+                totalCurrentlyPositive = currentHighest   
+            ELSE
+                totalCurrentlyPositive += currentHighest
+
+        IF (totalCurrentlyPositive == 0) THEN
+            OUTPUT "Average Daily Number of Currently Positive Cases: NO RECORDS FOUND."
+        ELSE 
+            averageDaily = totalCurrentlyPositive / pNumOfRecords
+            OUTPUT "Average Daily Number of Currently Positive Cases: averageDaily"
+    END of calcAverageDaily
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcPercentageRecovered
+    IMPORT: pGroup (String), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Calculates the percentage recovered cases FOR a given group of CovidRecord objects by 
+               dividing the total cumulative recovered cases by the total currently positive cases (call both methods to
+               get RETURN value), then prints out the appropriate message
+    ALGORITHM: 
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCumulativePositive, totalCumulativeRecovered, percentageRecovered
+
+        totalCumulativePositive = calcCumulativePositive(pGroup, pRecords)
+        totalCumulativeRecovered = calcCumulativeRecovered(pGroup, pRecords)
+
+        percentageRecovered = (totalCumulativeRecovered * 100) / totalCumulativePositive
+
+        OUTPUT "percentageRecovered% (totalCumulativeRecovered / totalCumulativePositive) cases recovered"
+    END of calcPercentageRecovered
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcPercentageDeceased
+    IMPORT: pGroup (String), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Calculates the percentage deceased cases FOR a given group of CovidRecord objects by
+               dividing the total cumulative deceased cases by the total currently positive cases (call both methods to
+               get return value), then prints out the appropriate message
+    ALGORITHM: 
+        String upperCaseGroup = pGroup TO UPPERCASE
+        int totalCumulativePositive, totalCumulativeDeceased, percentageDeceased
+
+        totalCumulativePositive = calcCumulativePositive(pGroup, pRecords)
+        totalCumulativeDeceased = calcCumulativeDeceased(pGroup, pRecords)
+
+        percentageDeceased = (totalCumulativeDeceased * 100) / totalCumulativePositive
+
+        OUTPUT "percentageDeceased% (totalCumulativeDeceased / totalCumulativePositive) cases deceased"
+    END of calcPercentageDeceased
+    -------------------------------------------------------------------------------------------------------------------------
+    METHOD: calcAllStatistics
+    IMPORT: pGroup (String), pNumOfRecords (int), pRecords (CovidRecord[])
+    EXPORT: none
+    ASSERTION: Calls all the other methods to calculate all the statistics FOR a given group of CovidRecord objects
+    ALGORITHM: 
+        String upperCaseGroup = pGroup TO UPPERCASE
+        String outputDivider = "================================================================================"
+
+        String ansiReset = "\u001B[0m"
+        String ansiRed = "\u001B[31m"
+        String ansiGreen = "\u001B[32m"
+        String ansiYellow = "\u001B[33m"
+        String ansiBlue = "\u001B[34m"
+        String ansiPurple = "\u001B[35m"
+        String ansiCyan = "\033[036m"    
+
+        OUTPUT "All Statistics"
+
+        calcCumulativePositive(pGroup, pRecords)
+        OUTPUT outputDivider -> RED
+
+        calcCumulativeDeceased(pGroup, pRecords)
+        OUTPUT outputDivider -> GREEN
+        
+        calcCumulativeRecovered(pGroup, pRecords)
+        OUTPUT outputDivider -> YELLOW
+        
+        calcAverageDaily(pGroup, pNumOfRecords, pRecords)
+        OUTPUT outputDivider -> BLUE
+        
+        calcPercentageRecovered(pGroup, pRecords)
+        OUTPUT outputDivider -> PURPLE
+        
+        calcPercentageDeceased(pGroup, pRecords)
+        OUTPUT outputDivider -> CYAN
+    END of calcAllStatistics
+    -------------------------------------------------------------------------------------------------------------------------
+END of CovidAnalysis class
+-------------------------------------------------------------------------------------------------------------------------

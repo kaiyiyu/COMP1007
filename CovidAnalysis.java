@@ -96,7 +96,7 @@ public class CovidAnalysis
             System.out.println("\nInvalid menu selection " + exception +
                                "\nProgram will stop executing. Goodbye!");
         }
-    }   // End of main
+    }   
 
     // -------------------- OTHER MENU METHODS -------------------- //
     /**
@@ -164,7 +164,7 @@ public class CovidAnalysis
             System.out.println("\nInvalid menu selection " + exception +
                                "\nProgram will stop executing. Goodbye!");
         }
-    }  // End promptMenuPerCountry
+    }  
 
     /**
      * METHOD: resetVisited
@@ -226,7 +226,7 @@ public class CovidAnalysis
             System.out.println("ERROR " + errorDetails.getMessage());
         }
         return lineNum;
-    }   // End readFile
+    }   
 
     /**
      * METHOD: loadData
@@ -274,7 +274,7 @@ public class CovidAnalysis
             }
             System.out.println("ERROR " + errorDetails.getMessage());
         }
-    }   // End loadData
+    }   
 
     /**
      * METHOD: processLine
@@ -328,7 +328,7 @@ public class CovidAnalysis
         
         // Initialise the new CovidRecord object to the array of CovidRecord objects
         pRecords[pLineNum] = record;
-    }   // End processLine
+    }   
 
     // ---------------- FILTER BY GROUP METHODS ---------------- //
     /**
@@ -402,7 +402,7 @@ public class CovidAnalysis
 
         // Call second menu selection with the new array of CovidRecord objects
         promptSecondMenu(pInput, numOfContinentRecords, pGroup, continentRecords);
-    }   // End filterByContinent
+    }   
 
     /**
      * METHOD: filterByCountry
@@ -429,7 +429,7 @@ public class CovidAnalysis
         }
         catch (InputMismatchException exception)
         {
-            System.out.println("\nInvalid coountry name input: " + exception +
+            System.out.println("\nInvalid country name input: " + exception +
                                "\nProgram will stop executing. Goodbye!");
         }
 
@@ -466,7 +466,7 @@ public class CovidAnalysis
             // Call second menu selection with the new array of CovidRecord objects
             promptSecondMenu(pInput, numOfCountryRecords, pGroup, countryRecords);
         }
-    }   // End filterByCountry
+    }   
 
     /**
      * METHOD: filterByDate
@@ -530,7 +530,7 @@ public class CovidAnalysis
             // Call second menu selection with the new array of CovidRecord objects
             promptSecondMenu(pInput, numOfDateRecords, pGroup, dateRecords);
         }
-    }   // End filterByDate
+    }   
     
     // ---------------- CALCULATION FOR STATISTICS METHODS ---------------- //
     /**
@@ -597,7 +597,7 @@ public class CovidAnalysis
             System.out.printf("\nTotal Cumulative Positive for %s: %d\n", upperCaseGroup, totalCumulativePositive);
         }
         return totalCumulativePositive;
-    }   // End of calcCumulativePositive
+    }   
 
     /**
      * METHOD: calcCumulativeDeceased
@@ -664,7 +664,7 @@ public class CovidAnalysis
         }
 
         return totalCumulativeDeceased;
-    }   // End of calcCumulativeDeceased
+    }   
 
     /**
      * METHOD: calcCumulativeRecovered
@@ -730,7 +730,7 @@ public class CovidAnalysis
         }
 
         return totalCumulativeRecovered; 
-    }   // End of calcCumulativeRecovered
+    }   
 
     /**
      * METHOD: calcAverageDaily
@@ -746,7 +746,7 @@ public class CovidAnalysis
      *            Most Recent Record: 30/11/2021
      *            Number of Country Records: 9
      *            Currently Positive: 207145
-     *            Computation for Daily Average: (207145 / 9) = 2.07
+     *            Computation for Daily Average: (207145 / 9) = 23,016
      */
     private static void calcAverageDaily(String pGroup, int pNumOfRecords, CovidRecord[] pRecords)
     {
@@ -807,7 +807,7 @@ public class CovidAnalysis
 
             System.out.printf("\nAverage Daily Number of Currently Positive Cases for %s: %d\n", upperCaseGroup, averageDaily);
         }
-    }   // End of calcAverageDaily
+    }   
 
     /**
      * METHOD: calcPercentageRecovered
@@ -831,7 +831,7 @@ public class CovidAnalysis
 
         System.out.println("\n" + percentageRecovered + "% (" + totalCumulativeRecovered + "/" + totalCumulativePositive +
                             ") cases recovered for " + upperCaseGroup + ".");
-    }   // End of calcPercentageRecovered
+    } 
 
     /**
      * METHOD: calcPercentageDeceased
@@ -855,7 +855,7 @@ public class CovidAnalysis
 
         System.out.println("\n" + percentageDeceased + "% (" + totalCumulativeDeceased + "/" + totalCumulativePositive +
                             ") cases deceased for " + upperCaseGroup + ".");
-    }   // End of calcPercentageDeceased
+    }   
 
     /**
      * METHOD: calcAllStatistics
@@ -877,7 +877,6 @@ public class CovidAnalysis
         String ansiPurple = "\u001B[35m";
         String ansiCyan = "\033[0;36m";    
 
-
         System.out.printf("\nAll Statistics for %s\n", upperCaseGroup);
 
         // Call all calculation methods with output dividers
@@ -893,5 +892,5 @@ public class CovidAnalysis
         System.out.println(ansiPurple + outputDivider + ansiReset);
         calcPercentageDeceased(pGroup, pRecords);
         System.out.println(ansiCyan + outputDivider + ansiReset);
-    }   // End of calcAllStatistics
+    }   
 } // End of CovidAnalysis class
