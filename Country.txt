@@ -4,3 +4,211 @@ Purpose: Pseudocode for Country class
 Date: 14/05/2022
 -------------------------------------------------------------------------------------------------------
 BEGIN Country
+    INSTANCE VARIABLES
+    private String iso3
+    private String continent
+    private String countryName
+    private String nuts
+    private double latitude
+    private double longitude 
+    -------------------------------------------------------------------------------------------------------
+    CONSTRUCTOR WITH PARAMETERS
+    IMPORT: pIso3 (String), pContinent (String), pCountryName (String), pNuts (String), 
+            pLatitude (double), pLongitude (double)
+    EXPORT: none
+    ASSERTION: Creates a Country object with imported values and validates the values
+    ALGORITHM: 
+        setIso3(pIso3)
+        setContinent(pContinent)
+        setCountryName(pCountryName)
+        setNuts(pNuts)
+        setLatitude(pLatitude)
+        setLongitude(pLongitude)
+    END CONSTRUCTOR WITH PARAMETERS
+    -------------------------------------------------------------------------------------------------------
+    COPY CONSTRUCTOR
+    IMPORT: pCountry (Country)
+    EXPORT: none
+    ASSERTION: Creates a copy of the Country object 
+    ALGORITHM: 
+        iso3 = pCountry.getIso3()
+        continent = pCountry.getContinent()
+        countryName = pCountry.getCountryName()
+        nuts = pCountry.getNuts()
+        latitude = pCountry.getLatitude()
+        longitude = pCountry.getLongitude()
+    END COPY CONSTRUCTOR
+    -------------------------------------------------------------------------------------------------------
+    DEFAULT CONSTRUCTOR
+    IMPORT: none
+    EXPORT: none
+    ASSERTION: Creates a Country object with default values
+    ALGORITHM: 
+        iso3 = ""
+        continent = ""
+        countryName = ""
+        nuts = ""
+        latitude = 0.0
+        longitude = 0.0
+    END DEFAULT CONSTRUCTOR
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getIso3
+    IMPORT: none
+    EXPORT: iso3 (String)
+    ASSERTION: Returns the iso3 code of the Country object
+    ALGORITHM: 
+        RETURN iso3
+    END getIso3
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getContinent
+    IMPORT: none
+    EXPORT: continent (String)
+    ASSERTION: Returns the continent of the Country object
+    ALGORITHM: 
+        RETURN continent
+    END getContinent
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getCountryName
+    IMPORT: none
+    EXPORT: countryName (String)
+    ASSERTION: Returns the name of the Country object
+    ALGORITHM: 
+        RETURN countryName
+    END getCountryName
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getNuts
+    IMPORT: none
+    EXPORT: nuts (String)
+    ASSERTION: Returns the NUTS code of the Country object
+    ALGORITHM: 
+        RETURN nuts
+    END getNuts
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getLatitude
+    IMPORT: none
+    EXPORT: latitude (double)
+    ASSERTION: Returns the latitude of the Country object
+    ALGORITHM: 
+        RETURN latitude
+    END getLatitude
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: getLongitude
+    IMPORT: none
+    EXPORT: longitude (double)
+    ASSERTION: Returns the longitude of the Country object
+    ALGORITHM:
+        RETURN longitude
+    END getLongitude
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: toString
+    IMPORT: none
+    EXPORT: countryString (String)
+    ASSERTION: Returns a string representation of the Country object
+    ALGORITHM: 
+        String countryString
+        countryString = "Iso3 is " + iso3 + 
+                        "Continent is " + continent + 
+                        "Country Name is " + countryName + 
+                        "Nuts is " + nuts +
+                        "Latitude is " + latitude + 
+                        "Longitude is " + longitude
+
+        RETURN countryString
+    END toString
+    -------------------------------------------------------------------------------------------------------
+    ACCESSOR: equals
+    IMPORT: inObject (Object)
+    EXPORT: isEqual (Boolean)
+    ASSERTION: Returns true IF the two objects are equivalent
+    ALGORITHM: 
+        boolean isEqual = false
+        Country inCountry = null
+
+        IF (inObject IS INSTANCE OF Country) THEN
+            inCountry = (Country) inObject
+
+            IF (iso3.equals(inCountry.getIso3()) AND
+                continent.equals(inCountry.getContinent()) AND
+                countryName.equals(inCountry.getCountryName()) AND
+                nuts.equals(inCountry.getNuts()) AND
+                latitude == inCountry.getLatitude() AND
+                longitude == inCountry.getLongitude()) THEN
+                    isEqual = true
+
+        RETURN isEqual
+    END equals
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setIso3
+    IMPORT: pIso3 (String)
+    EXPORT: none
+    ASSERTION: State of iso3 is updated to pIso3 value
+    ALGORITHM: 
+        IF (pIso3.length() != 3) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "ISO3 must be 3 characters long."
+        ELSE
+            iso3 = pIso3
+    END setIso3
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setContinent
+    IMPORT: pContinent (String)
+    EXPORT: none
+    ASSERTION: State of continent is updated to pContinent value
+    ALGORITHM: 
+        IF (pContinent.length() != 2) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Continent format must be 2 characters long."
+        ELSE
+            continent = pContinent
+    END setContinent
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setCountryName
+    IMPORT: pCountryName (String)
+    EXPORT: none
+    ASSERTION: State of countryName is updated to pCountryName value
+    ALGORITHM: 
+        IF ((pCountryName == null) OR (pCountryName.isEmpty())) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Country name cannot be null or empty."
+        ELSE
+            countryName = pCountryName
+    END setCountryName
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setNuts
+    IMPORT: pNuts (String)
+    EXPORT: none
+    ASSERTION: State of nuts is updated to pNuts value
+    ALGORITHM: 
+        IF (pNuts != "NONE) AND (pNuts.length() != 2)) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "NUTS format must be NONE or 2 characters long.
+        ELSE    
+            nuts = pNuts
+    END setNuts
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setLatitude
+    IMPORT: pLatitude (double)
+    EXPORT: none
+    ASSERTION: State of latitude is updated to pLatitude value
+    ALGORITHM: 
+        IF ((pLatitude LESS THAN -90.0) OR (pLatitude GREATER THAN 90.0)) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Latitude must be between -90 and 90."
+        ELSE
+            latitude = pLatitude
+    END setLatitude
+    -------------------------------------------------------------------------------------------------------
+    MUTATOR: setLongitude
+    IMPORT: pLongitude (double)
+    EXPORT: none
+    ASSERTION: State of longitude is updated to pLongitude value
+    ALGORITHM: 
+        IF ((pLongitude LESS THAN -180.0) OR (pLongitude GREATER THAN 180.0)) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Longitude must be between -180 and 180."
+        ELSE
+            longitude = pLongitude
+    END setLongitude
+    -------------------------------------------------------------------------------------------------------
+END Country CLASS
+-------------------------------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 /**
  * Author: Kai-Yu Yu
  * Purpose: Implementation of Country class
- * Date: 14/05/2022
- * Remarks: Methods are all under 50 lines only (except main). Code comments made the methods 
+ * Date: 16/05/2022
+ * Remarks: Methods are all under 50 lines only. Code comments made the methods 
  *          seem long
  */
 

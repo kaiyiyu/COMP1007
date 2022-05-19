@@ -1,8 +1,8 @@
 /**
  * Author: Kai-Yu Yu
  * Purpose: Implementation of CovidRecord class
- * Date: 14/05/2022
- * Remarks: Methods are all under 50 lines only (except main). Code comments made the methods 
+ * Date: 16/05/2022
+ * Remarks: Methods are all under 50 lines only. Code comments made the methods 
  *          seem long
  */
 
@@ -20,6 +20,7 @@ public class CovidRecord
     private int hospitalized;
     private int intensiveCare;
     private Country country;
+    private boolean visited; // New instance variable to keep track of visited countries when looping
     
     // Constructors
     /**
@@ -161,11 +162,23 @@ public class CovidRecord
      * IMPORT: none
      * EXPORT: country (Country)
      * ASSERTION: Returns a copy of the aggregated Country object of the CovidRecord object
+     *            using a COPY CONSTRUCTOR
      */
     public Country getCountry()
     {
         Country tempCountry = new Country(country);
         return tempCountry;
+    }
+
+    /**
+     * ACCESSOR: getVisited
+     * IMPORT: none
+     * EXPORT: visited (boolean)
+     * ASSERTION: Returns the visited status of the CovidRecord object 
+     */
+    public boolean getVisited()
+    {
+        return visited;
     }
 
     /**
@@ -359,6 +372,18 @@ public class CovidRecord
         {
             country = pCountry;
         }
+    }
+
+    /**
+     * MUTATOR: setVisited
+     * IMPORT: pVisited (Boolean)
+     * EXPORT: none
+     * ASSERTION: State of visited is updated to pVisited value
+     */
+    public void setVisited(boolean pVisited)
+    {
+        visited = pVisited; // No validation needed since parameter is set to boolean and should 
+                            //   not accept any other data type
     }
 
     // Internal methods (private)

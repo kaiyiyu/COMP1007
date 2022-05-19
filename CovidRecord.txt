@@ -58,7 +58,7 @@ BEGIN CovidRecord
         currentlyPositive = 0
         hospitalized = 0
         intensiveCare = 0
-        country = new Country
+        country = NEW Country
     END DEFAULT CONSTRUCTOR
     --------------------------------------------------------------------------------------------------------
     ACCESSOR: getDate
@@ -112,247 +112,212 @@ BEGIN CovidRecord
     IMPORT: none
     EXPORT: intensiveCare (int)
     ASSERTION: Returns the number of intensive care cases of the CovidRecord object
-
-    public int getIntensiveCare()
-
+    ALGORITHM:
         RETURN intensiveCare
+    END intensiveCare
     --------------------------------------------------------------------------------------------------------
-
     ACCESSOR: getCountry
     IMPORT: none
     EXPORT: country (Country)
     ASSERTION: Returns a copy of the aggregated Country object of the CovidRecord object
-
-    public Country getCountry()
-
-        Country tempCountry = new Country(country)
+               using a COPY CONSTRUCTOR
+    ALGORITHM: 
+        Country tempCountry = NEW Country(country)
+        
         RETURN tempCountry
+    END getCountry
     --------------------------------------------------------------------------------------------------------
-
+    ACCESSOR: getVisited
+    IMPORT: none
+    EXPORT: visited (boolean)
+    ASSERTION: Returns the visited status of the CovidRecord object 
+    ALGORITHM:
+        RETURN visited
+    END getVisited
+    --------------------------------------------------------------------------------------------------------
     ACCESSOR: toString
     IMPORT: none
     EXPORT: covidRecordString (String)
-    ASSERTION: Returns a string representation of the CovidRecord object
-
-    public String toString()
-
+    ASSERTION: Returns a string representation of the CovidRecord object       
+    ALGORITHM: 
         String covidRecordString
         covidRecordString = "Date is " + date +
-                            "\nCumulative Positive is " + cumulativePositive + 
-                            "\nCumulative Deceased is " + cumulativeDeceased + 
-                            "\nCumulative Recovered is " + cumulativeRecovered + 
-                            "\nCurrently Positive is " + currentlyPositive + 
-                            "\nHospitalized is " + hospitalized + 
-                            "\nIntensive Care is " + intensiveCare + 
-                            "\nCountry is " + country.toString()
-        RETURN covidRecordString
-    --------------------------------------------------------------------------------------------------------
+                            "Cumulative Positive is " + cumulativePositive + 
+                            "Cumulative Deceased is " + cumulativeDeceased + 
+                            "Cumulative Recovered is " + cumulativeRecovered + 
+                            "Currently Positive is " + currentlyPositive + 
+                            "Hospitalized is " + hospitalized + 
+                            "Intensive Care is " + intensiveCare + 
+                            "Country is " + country.toString()
 
+        RETURN covidRecordString
+    END toString
+    --------------------------------------------------------------------------------------------------------
     ACCESSOR: equals
     IMPORT: inObject (Object)
     EXPORT: isEqual (Boolean)
     ASSERTION: Returns true IF the two objects are equivalent
-
-    public boolean equals(Object inObject)
-
+    ALGORITHM: 
         boolean isEqual = false
         CovidRecord inCovidRecord = null
-        IF (inObject instanceof CovidRecord)
-
+        
+        IF (inObject IS INSTANCE OF CovidRecord) THEN
             inCovidRecord = (CovidRecord) inObject
-            IF ((date.equals(inCovidRecord.getDate())) &&
-                (cumulativePositive == inCovidRecord.getCumulativePositive()) &&
-                (cumulativeDeceased == inCovidRecord.getCumulativeDeceased()) &&
-                (cumulativeRecovered == inCovidRecord.getCumulativeRecovered()) &&
-                (currentlyPositive == inCovidRecord.getCurrentlyPositive()) &&
-                (hospitalized == inCovidRecord.getHospitalized()) &&
-                (intensiveCare == inCovidRecord.getIntensiveCare()) &&
-                (country.equals(inCovidRecord.getCountry())))
 
-                isEqual = true
-
+            IF (date.equals(inCovidRecord.getDate()) AND
+                cumulativePositive == inCovidRecord.getCumulativePositive() AND
+                cumulativeDeceased == inCovidRecord.getCumulativeDeceased() AND
+                cumulativeRecovered == inCovidRecord.getCumulativeRecovered() AND
+                currentlyPositive == inCovidRecord.getCurrentlyPositive() AND
+                hospitalized == inCovidRecord.getHospitalized() AND
+                intensiveCare == inCovidRecord.getIntensiveCare() AND
+                country.equals(inCovidRecord.getCountry()) THEN
+                    isEqual = true
 
         RETURN isEqual
+    END equals
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setDate
     IMPORT: pDate (String)
     EXPORT: none
     ASSERTION: State of date is updated to pDate value
-
-    public void setDate(String pDate)
-
-        IF ((firstValidateDate(pDate) != true) && (secondValidateDate(pDate) != true)) // Invalid IF both formats are incorrect
-
-            throw new IllegalArgumentException("Invalid date format.")
-
+    ALGORITHM: 
+        IF ((firstValidateDate(pDate) IS NOT true) AND (secondValidateDate(pDate) IS NOT true)) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Invalid date format."
         ELSE
-
             date = pDate
-
+    END setDate
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setCumulativePositive
     IMPORT: pCumulativePositive (int)
     EXPORT: none
     ASSERTION: State of cumulativePositive is updated to pCumulativePositive value
-
-    public void setCumulativePositive(int pCumulativePositive)
-
-        IF (pCumulativePositive < 0)
-
-            throw new IllegalArgumentException("Cumulative Positive cases cannot be negative.")
-
+    ALGORITHM: 
+        IF (pCumulativePositive LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Cumulative Positive cases cannot be negative."
         ELSE
-
             cumulativePositive = pCumulativePositive
+    END setCumulativePositive
     --------------------------------------------------------------------------------------------------------
-
-
     MUTATOR: setCumulativeDeceased
     IMPORT: pCumulativeDeceased (int)
     EXPORT: none
     ASSERTION: State of cumulativeDeceased is updated to pCumulativeDeceased value
-
-    public void setCumulativeDeceased(int pCumulativeDeceased)
-
-        IF (pCumulativeDeceased < 0)
-
-            throw new IllegalArgumentException("Cumulative Deceased cases cannot be negative.")
-
+    ALGORITHM: 
+        IF (pCumulativeDeceased LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Cumulative Deceased cases cannot be negative."
         ELSE
-
             cumulativeDeceased = pCumulativeDeceased
-
+    END setCumulativeDeceased
     --------------------------------------------------------------------------------------------------------
     MUTATOR: setCumulativeRecovered
     IMPORT: pCumulativeRecovered (int)
     EXPORT: none
     ASSERTION: State of cumulativeRecovered is updated to pCumulativeRecovered value
     ALGORITHM:
-
-        IF (pCumulativeRecovered < 0)
-
-            throw new IllegalArgumentException("Cumulative Recovered cases cannot be negative.")
-
+        IF (pCumulativeRecovered LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Cumulative Recovered cases cannot be negative."
         ELSE
-
             cumulativeRecovered = pCumulativeRecovered
-
+    END setCumulativeRecovered
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setCurrentlyPositive
     IMPORT: pCurrentlyPositive (int)
     EXPORT: none
     ASSERTION: State of currentlyPositive is updated to pCurrentlyPositive value
-
-    public void setCurrentlyPositive(int pCurrentlyPositive)
-
-        IF (pCurrentlyPositive < 0)
-
-            throw new IllegalArgumentException("Currently Positive cases cannot be negative.")
-
+    ALGORITHM: 
+        IF (pCurrentlyPositive LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Currently Positive cases cannot be negative."
         ELSE
-
             currentlyPositive = pCurrentlyPositive
-
+    END setCurrentlyPositive
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setHospitalized
     IMPORT: pHospitalized (int)
     EXPORT: none
     ASSERTION: State of hospitalized is updated to pHospitalized value
-
-    public void setHospitalized(int pHospitalized)
-
-        IF (pHospitalized < 0)
-
-            throw new IllegalArgumentException("Hospitalized cases cannot be negative.")
-
+    ALGORITHM: 
+        IF (pHospitalized LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Hospitalized cases cannot be negative."
         ELSE
-
             hospitalized = pHospitalized
-
+    END setHospitalized
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setIntensiveCare
     IMPORT: pIntensiveCare (int)
     EXPORT: none
     ASSERTION: State of intensiveCare is updated to pIntensiveCare value
-
-    public void setIntensiveCare(int pIntensiveCare)
-
-        IF (pIntensiveCare < 0)
-
-            throw new IllegalArgumentException("Intensive Care cases cannot be negative.")
-
+    ALGORITHM: 
+        IF (pIntensiveCare LESS THAN 0) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Intensive Care cases cannot be negative."
         ELSE
-
             intensiveCare = pIntensiveCare
-
+    END setIntensiveCare
     --------------------------------------------------------------------------------------------------------
-
     MUTATOR: setCountry
     IMPORT: pCountry (Country)
     EXPORT: none
     ASSERTION: State of country is updated to pCountry value
-
-    public void setCountry(Country pCountry)
-
-        IF (pCountry == null)
-
-            throw new IllegalArgumentException("Country cannot be null.") // General check IF object is null
-
+    ALGORITHM: 
+        IF (pCountry == null) THEN
+            THROW Illegal Argument Exception
+            OUTPUT "Country cannot be null.
         ELSE
-
             country = pCountry
-
+    END setCountry
+    --------------------------------------------------------------------------------------------------------
+    MUTATOR: setVisited
+    IMPORT: pVisited (Boolean)
+    EXPORT: none
+    ASSERTION: State of visited is updated to pVisited value
+    ALGORITHM:
+        visited = pVisited
+    END setVisited
     --------------------------------------------------------------------------------------------------------
     METHOD: firstValidateDate
     IMPORT: date (String)
     EXPORT: isValid (Boolean)
     ASSERTION: Returns true IF String date is valid for dd/m/yyyy format
-
-    private boolean firstValidateDate(String date) 
-
+    ALGORITHM:
         String firstDateFormat = "dd/M/yyyy"
         boolean isValid = false
+        
         TRY
-
-            SimpleDateFormat df = new SimpleDateFormat(firstDateFormat)
+            SimpleDateFormat df = NEW SimpleDateFormat(firstDateFormat)
             df.setLenient(false)
             df.parse(date)
             isValid = true
-
-        CATCH (ParseException exception) 
-
-            System.out.println("ERROR " + exception.getMessage())
+        CATCH EXCEPTION ParseException as exception
+            OUTPUT "Error in parsing" 
 
         RETURN isValid
+    END firstValidateDate
     --------------------------------------------------------------------------------------------------------
-
     METHOD: secondValidateDate
     IMPORT: date (String)
     EXPORT: isValid (Boolean)
-    ASSERTION: Returns true IF String date is valid for dd/mm/yyyy format
-
-    private boolean secondValidateDate(String date) 
-
+    ASSERTION: Returns true if String date is valid for dd/mm/yyyy format
+    ALGORITHM:
         String secondDateFormat = "dd/MM/yyyy"
         boolean isValid = false
+        
         TRY
-
-            SimpleDateFormat df = new SimpleDateFormat(secondDateFormat)
+            SimpleDateFormat df = NEW SimpleDateFormat(secondDateFormat)
             df.setLenient(false)
             df.parse(date)
             isValid = true
-
-        CATCH (ParseException exception) 
-
-            System.out.println("ERROR " + exception.getMessage())
-
+        CATCH EXCEPTION ParseException as exception
+            OUTPUT "Error in parsing" 
+            
         RETURN isValid
     END secondValidateDate
     --------------------------------------------------------------------------------------------------------
-END COVIDRECORD CLASS
+END CovidRecord CLASS
 --------------------------------------------------------------------------------------------------------
