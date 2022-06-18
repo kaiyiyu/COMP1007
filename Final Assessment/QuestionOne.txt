@@ -1,0 +1,96 @@
+-------------------------------------------------------------------------------------------------------
+Author: Kai-Yu Yu (20872014)
+PURPOSE: Pseudocode for Question Two in QuestionOne.java
+DATE: 13/06/2022
+-------------------------------------------------------------------------------------------------------
+BEGIN QuestionOne
+    MAIN:
+        int theArray [][] = arrayGenerator()
+        NEW SCANNER input
+        float percentage = 0
+
+        WHILE (percentage == 0)
+            TRY
+                OUTPUT "Enter percentage amount to transform array values [RANGE: 0.75 - 1.25]: " 
+                INPUT percentage PARSE float
+
+                IF (percentage < 0.75 OR percentage > 1.25) THEN
+                    OUTPUT "Percentage amount out of range. Please try again." 
+                    percentage = 0
+                ELSE
+                    transformArrayValues(theArray, percentage)
+                    printArray(theArray) 
+                    writeToFile(theArray)    
+        
+            CATCH EXCEPTION NumberFormatException as exception 
+                OUTPUT "Invalid input type error: exception. Please try again."
+
+        CLOSE input
+    END MAIN
+    -------------------------------------------------------------------------------------------------------
+    METHOD:     transformArrayValues
+    PURPOSE:    To transform the values of the 2D array 
+                by the amount from user input           
+    DATE:       June 13, 2022                              
+    IMPORTS:    theArray (2D integer array)                  
+                percentage (float)                       
+    EXPORTS:    none                                
+    ALGORITHM:
+        int tempArrayValue
+
+        FOR (int i = 0 TO LENGTH OF theArray CHANGEBY 1)
+        
+            FOR (int j = 0 TO LENGTH OF theArray CHANGEBY 1)
+                tempArrayValue = ROUND OFF theArray[i][j] * percentage
+                
+                IF (tempArrayValue > 65536) THEN
+                    theArray[i][j] = -1
+                ELSE
+                    theArray[i][j] = tempArrayValue
+    END transformArrayValues
+    -------------------------------------------------------------------------------------------------------
+    METHOD:     printArray
+    PURPOSE:    To display the new 2D array to the user  
+    DATE:       June 13, 2022                               
+    IMPORTS:    theArray (2D integer array)                    
+    EXPORTS:    none                                 
+    ALGORITHM: 
+        OUTPUT "TRANSFORMED TWO-DIMENSIONAL ARRAY"
+
+        FOR (int i = 0 TO LENGTH OF theArray CHANGEBY 1)
+        
+            FOR (int j = 0 TO LENGTH OF theArray CHANGEBY 1)
+                OUTPUT theArray[i][j]
+            
+            OUTPUT NEXT LINE
+    END printArray
+    -------------------------------------------------------------------------------------------------------
+    METHOD:     writeToFile
+    PURPOSE:    To write the new 2D array to a file named "temp.txt"      
+    DATE:       June 13, 2022                               
+    IMPORTS:    theArray (2D integer array)                    
+    EXPORTS:    none                                                                                 
+    ASSERTIONS: The file is written to the same directory as the program is run from.                                                   
+                The file is overwritten if it already exists.                                   
+                The file is created if it does not exist.                                     
+                The current "temp.txt" contains the new 2D array after increasing the values by 1.25x or 25%.                              
+    ALGORITHM: 
+        TRY
+            NEW PRINTWRITER output <- "temp.txt"
+            WRITE OUTPUT "TRANSFORMED TWO-DIMENSIONAL ARRAY" 
+            
+            FOR (int i = 0 TO LENGTH OF theArray CHANGEBY 1)
+            
+                FOR (int j = 0 TO LENGTH OF theArray CHANGEBY 1)
+                    WRITE OUTPUT theArray[i][j]
+                
+                WRITE OUTPUT NEXT LINE
+            
+            CLOSE output
+        
+        CATCH EXCEPTION IOException asexception
+            OUTPUT "IO error: exception. Program will stop executing. Goodbye!"
+    END writeToFile
+    -------------------------------------------------------------------------------------------------------
+END QuestionOne
+-------------------------------------------------------------------------------------------------------
