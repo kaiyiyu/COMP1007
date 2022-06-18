@@ -29,9 +29,10 @@ public class CovidRecord
      *         pCumulativeRecovered (int), pCurrentlyPositive (int), pHospitalized (int), 
      *         pIntensiveCare (int), pCountry (Country)
      * EXPORT: none
-     * ASSERTION: Creates a CovidRecord object with imported values and validates the values
+     * ASSERTION: Creates a CovidRecord object with imported values and uses the mutator methods
+     *            to validate the values
      */
-    public CovidRecord(String pDate, int pCumulativePositive, int pCumulativeDeceased, int pCumulativeRecovered, int pCurrentlyPositive, int pHospitalized, int pIntensiveCare, Country pCountry)
+    public CovidRecord(String pDate, int pCumulativePositive, int pCumulativeDeceased, int pCumulativeRecovered, int pCurrentlyPositive, int pHospitalized, int pIntensiveCare, Country pCountry, boolean pVisited)
     {
         setDate(pDate);
         setCumulativePositive(pCumulativePositive);
@@ -41,6 +42,7 @@ public class CovidRecord
         setHospitalized(pHospitalized);
         setIntensiveCare(pIntensiveCare);
         setCountry(pCountry);
+        setVisited(pVisited);
     }
 
     /**
@@ -59,6 +61,7 @@ public class CovidRecord
         hospitalized = pCovidRecord.getHospitalized();
         intensiveCare = pCovidRecord.getIntensiveCare();
         country = pCovidRecord.getCountry();
+        visited = pCovidRecord.getVisited();
     }
 
     /**
@@ -77,6 +80,7 @@ public class CovidRecord
         hospitalized = 0;
         intensiveCare = 0;
         country = new Country();
+        visited = false;
     }
 
     // Accessor methods (getters)
@@ -383,7 +387,7 @@ public class CovidRecord
     public void setVisited(boolean pVisited)
     {
         visited = pVisited; // No validation needed since parameter is set to boolean and should 
-                            //   not accept any other data type
+                            // not accept any other data type
     }
 
     // Internal methods (private)

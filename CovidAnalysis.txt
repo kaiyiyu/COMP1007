@@ -69,10 +69,11 @@ BEGIN CovidAnalysis
                and RETURNs to the first menu selection when done
     ALGORITHM: 
         int selection
-        boolean validSelection = true
+        boolean validSelection = false
                         
         TRY
             DO 
+                validSelection = true
                 OUTPUT "Please select from a statistic below:" +
                        "> 1. Total number of cumulatively positive cases" +
                        "> 2. Total number of cumulatively deceased cases" +
@@ -215,6 +216,8 @@ BEGIN CovidAnalysis
         double longitude = PARSE DOUBLE (splitLine[5])    
         Country country = Country(iso3, continent, countryName, nuts, latitude, longitude)
 
+        boolean visited = false
+
         String date = splitLine[0]
         int cumulativePositive = PARSE INTEGER (splitLine[6])
         int cumulativeDeceased = PARSE INTEGER (splitLine[7])
@@ -222,7 +225,7 @@ BEGIN CovidAnalysis
         int currentlyPositive = PARSE INTEGER (splitLine[9])
         int hospitalized = PARSE INTEGER (splitLine[10])
         int intensiveCare = PARSE INTEGER (splitLine[11])
-        CovidRecord record = CovidRecord(date, cumulativePositive, cumulativeDeceased, cumulativeRecovered, currentlyPositive, hospitalized, intensiveCare, country)
+        CovidRecord record = CovidRecord(date, cumulativePositive, cumulativeDeceased, cumulativeRecovered, currentlyPositive, hospitalized, intensiveCare, country, visited)
         
         pRecords[pLineNum] = record
     END processLine
@@ -370,10 +373,10 @@ BEGIN CovidAnalysis
                         IF (pRecords[j].getCumulativePositive() >= currentHighest) THEN
                             currentHighest = pRecords[j].getCumulativePositive()
                         
-            IF (currentCountry.equals(upperCaseGroup)) THEN
-                totalCumulativePositive = currentHighest   
-            ELSE
-                totalCumulativePositive += currentHighest
+                IF (currentCountry.equals(upperCaseGroup)) THEN
+                    totalCumulativePositive = currentHighest   
+                ELSE
+                    totalCumulativePositive += currentHighest
             
         IF (totalCumulativePositive == 0) THEN
            OUTPUT "Total Cumulative Positive: NO RECORDS FOUND."
@@ -408,10 +411,10 @@ BEGIN CovidAnalysis
                         IF (pRecords[j].getCumulativeDeceased() >= currentHighest) THEN
                             currentHighest = pRecords[j].getCumulativeDeceased()
 
-            IF (currentCountry.equals(upperCaseGroup)) THEN
-                totalCumulativeDeceased = currentHighest   
-            ELSE
-                totalCumulativeDeceased += currentHighest
+                IF (currentCountry.equals(upperCaseGroup)) THEN
+                    totalCumulativeDeceased = currentHighest   
+                ELSE
+                    totalCumulativeDeceased += currentHighest
 
         IF (totalCumulativeDeceased == 0) THEN
            OUTPUT "Total Cumulative Deceased: NO RECORDS FOUND."
@@ -446,10 +449,10 @@ BEGIN CovidAnalysis
                         IF (pRecords[j].getCumulativeRecovered() >= currentHighest) THEN
                             currentHighest = pRecords[j].getCumulativeRecovered()
 
-            IF (currentCountry.equals(upperCaseGroup)) THEN
-                totalCumulativeRecovered = currentHighest   
-            ELSE
-                totalCumulativeRecovered += currentHighest
+                IF (currentCountry.equals(upperCaseGroup)) THEN
+                    totalCumulativeRecovered = currentHighest   
+                ELSE
+                    totalCumulativeRecovered += currentHighest
             
         IF (totalCumulativeRecovered == 0) THEN
            OUTPUT "Total Cumulative Recovered: NO RECORDS FOUND."
@@ -478,7 +481,7 @@ BEGIN CovidAnalysis
         String upperCaseGroup = pGroup TO UPPERCASE
         int totalCurrentlyPositive = 0
         int currentHighest = 0
-        int averageDaily     
+        float averageDaily     
 
         FOR (int i = 0 TO LENGTH OF pRecords CHANGEBY 1)
             currentCountry =  pRecords[i].getCountry().getCountryName()
@@ -494,15 +497,16 @@ BEGIN CovidAnalysis
                         IF (pRecords[j].getCurrentlyPositive() >= currentHighest) THEN
                             currentHighest = pRecords[j].getCurrentlyPositive()
                         
-            IF (currentCountry.equals(upperCaseGroup)) THEN
-                totalCurrentlyPositive = currentHighest   
-            ELSE
-                totalCurrentlyPositive += currentHighest
+                IF (currentCountry.equals(upperCaseGroup)) THEN
+                    totalCurrentlyPositive = currentHighest   
+                ELSE
+                    totalCurrentlyPositive += currentHighest
 
         IF (totalCurrentlyPositive == 0) THEN
             OUTPUT "Average Daily Number of Currently Positive Cases: NO RECORDS FOUND."
         ELSE 
-            averageDaily = totalCurrentlyPositive / pNumOfRecords
+            averageDaily = (float) totalCurrentlyPositive / pNumOfRecords
+            ROUND OFF averageDaily
             OUTPUT "Average Daily Number of Currently Positive Cases: averageDaily"
     END of calcAverageDaily
     -------------------------------------------------------------------------------------------------------------------------
@@ -514,13 +518,15 @@ BEGIN CovidAnalysis
                get RETURN value), then prints out the appropriate message
     ALGORITHM: 
         String upperCaseGroup = pGroup TO UPPERCASE
-        int totalCumulativePositive, totalCumulativeRecovered, percentageRecovered
+        int totalCumulativePositive, totalCumulativeRecovered
+        float percentageRecovered
 
         totalCumulativePositive = calcCumulativePositive(pGroup, pRecords)
         totalCumulativeRecovered = calcCumulativeRecovered(pGroup, pRecords)
 
-        percentageRecovered = (totalCumulativeRecovered * 100) / totalCumulativePositive
+        percentageRecovered = (float) (totalCumulativeRecovered * 100) / totalCumulativePositive
 
+        ROUND OFF percentageRecovered
         OUTPUT "percentageRecovered% (totalCumulativeRecovered / totalCumulativePositive) cases recovered"
     END of calcPercentageRecovered
     -------------------------------------------------------------------------------------------------------------------------
@@ -532,13 +538,15 @@ BEGIN CovidAnalysis
                get return value), then prints out the appropriate message
     ALGORITHM: 
         String upperCaseGroup = pGroup TO UPPERCASE
-        int totalCumulativePositive, totalCumulativeDeceased, percentageDeceased
+        int totalCumulativePositive, totalCumulativeDeceased
+        float percentageDeceased
 
         totalCumulativePositive = calcCumulativePositive(pGroup, pRecords)
         totalCumulativeDeceased = calcCumulativeDeceased(pGroup, pRecords)
 
-        percentageDeceased = (totalCumulativeDeceased * 100) / totalCumulativePositive
+        percentageDeceased = (float) (totalCumulativeDeceased * 100) / totalCumulativePositive
 
+        ROUND OFF percentageDeceased
         OUTPUT "percentageDeceased% (totalCumulativeDeceased / totalCumulativePositive) cases deceased"
     END of calcPercentageDeceased
     -------------------------------------------------------------------------------------------------------------------------

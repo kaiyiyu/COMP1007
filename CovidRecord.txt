@@ -17,9 +17,10 @@ BEGIN CovidRecord
     CONSTRUCTOR WITH PARAMETERS
     IMPORT: pDate (String), pCumulativePositive (int), pCumulativeDeceased (int), 
             pCumulativeRecovered (int), pCurrentlyPositive (int), pHospitalized (int), 
-            pIntensiveCare (int), pCountry (Country)
+            pIntensiveCare (int), pCountry (Country), pVisited (boolean)
     EXPORT: none
-    ASSERTION: Creates a CovidRecord object with imported values and validates the values
+    ASSERTION: Creates a CovidRecord object with imported values and uses the mutator methods
+               to validate the values
     ALGORITHM:
         setDate(pDate)
         setCumulativePositive(pCumulativePositive)
@@ -29,6 +30,7 @@ BEGIN CovidRecord
         setHospitalized(pHospitalized)
         setIntensiveCare(pIntensiveCare)
         setCountry(pCountry)
+        setVisited(pVisited)
     END CONSTRUCTOR WITH PARAMETERS
     --------------------------------------------------------------------------------------------------------
     COPY CONSTRUCTOR
@@ -44,6 +46,7 @@ BEGIN CovidRecord
         hospitalized = pCovidRecord.getHospitalized()
         intensiveCare = pCovidRecord.getIntensiveCare()
         country = pCovidRecord.getCountry()
+        visited = pCovidRecord.getVisited()
     END COPY CONSTRUCTOR
     --------------------------------------------------------------------------------------------------------
     DEFAULT CONSTRUCTOR
@@ -59,6 +62,7 @@ BEGIN CovidRecord
         hospitalized = 0
         intensiveCare = 0
         country = NEW Country
+        visited = false
     END DEFAULT CONSTRUCTOR
     --------------------------------------------------------------------------------------------------------
     ACCESSOR: getDate

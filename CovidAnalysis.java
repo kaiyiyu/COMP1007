@@ -12,6 +12,7 @@
  */
 import java.io.*;
 import java.util.*;
+import java.lang.Math;
 public class CovidAnalysis
 {
     /**
@@ -109,7 +110,7 @@ public class CovidAnalysis
     private static void promptSecondMenu(Scanner pInput, int pNumOfRecords, String pGroup, CovidRecord[] pRecords)
     {
         int selection;
-        boolean validSelection = true;
+        boolean validSelection = false;
                         
         // Exeption handling for non-integer user input
         try
@@ -117,6 +118,8 @@ public class CovidAnalysis
             // Do-while loop to keep asking for valid menu selection if user inputs integer out of range
             do 
             {
+                // Reset to true if user enters an invalid integer to get out of while loop once valid input is entered
+                validSelection = true;
                 System.out.println("\nPlease select from a statistic below:\n" +
                                    "> 1. Total number of cumulatively positive cases\n" +
                                    "> 2. Total number of cumulatively deceased cases\n" +
@@ -324,7 +327,11 @@ public class CovidAnalysis
         int currentlyPositive = Integer.parseInt(splitLine[9]);
         int hospitalized = Integer.parseInt(splitLine[10]);
         int intensiveCare = Integer.parseInt(splitLine[11]);
-        CovidRecord record = new CovidRecord(date, cumulativePositive, cumulativeDeceased, cumulativeRecovered, currentlyPositive, hospitalized, intensiveCare, country);
+
+        // Visited parameter set to false to use it as a parameter for the following constructor
+        boolean visited = false;
+
+        CovidRecord record = new CovidRecord(date, cumulativePositive, cumulativeDeceased, cumulativeRecovered, currentlyPositive, hospitalized, intensiveCare, country, visited);
         
         // Initialise the new CovidRecord object to the array of CovidRecord objects
         pRecords[pLineNum] = record;
@@ -572,19 +579,19 @@ public class CovidAnalysis
                         }
                     }
                 } 
-            }
-       
-            // Get total for group selected
-            if (currentCountry.equals(upperCaseGroup))
-            {
-                // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
-                // record of that country)
-                totalCumulativePositive = currentHighest;   
-            }
-            else
-            {
-                // Add for all other first menu selection which contains multiple country records
-                totalCumulativePositive += currentHighest;
+
+                // Get total for group selected
+                if (currentCountry.equals(upperCaseGroup))
+                {
+                    // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
+                    // record of that country)
+                    totalCumulativePositive = currentHighest;   
+                }
+                else
+                {
+                    // Add for all other first menu selection which contains multiple country records
+                    totalCumulativePositive += currentHighest;
+                }
             }
         }
         // Check if records exist or not missing then output message 
@@ -637,20 +644,20 @@ public class CovidAnalysis
                             currentHighest = pRecords[j].getCumulativeDeceased();
                         }
                     }
-                } 
-            }
+                }
 
-            // Get total for group selected
-            if (currentCountry.equals(upperCaseGroup))
-            {
-                // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
-                // record of that country)
-                totalCumulativeDeceased = currentHighest;   
-            }
-            else
-            {
-                // Add for all other first menu selection which contains multiple country records
-                totalCumulativeDeceased += currentHighest;
+                // Get total for group selected
+                if (currentCountry.equals(upperCaseGroup))
+                {
+                    // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
+                    // record of that country)
+                    totalCumulativeDeceased = currentHighest;   
+                }
+                else
+                {
+                    // Add for all other first menu selection which contains multiple country records
+                    totalCumulativeDeceased += currentHighest;
+                }     
             }
         }
         // Check if records exist or not missing then output message 
@@ -704,19 +711,19 @@ public class CovidAnalysis
                         }
                     }
                 } 
-            }
 
-            // Get total for group selected
-            if (currentCountry.equals(upperCaseGroup))
-            {
-                // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
-                // record of that country)
-                totalCumulativeRecovered = currentHighest;   
-            }
-            else
-            {
-                // Add for all other first menu selection which contains multiple country records
-                totalCumulativeRecovered += currentHighest;
+                // Get total for group selected
+                if (currentCountry.equals(upperCaseGroup))
+                {
+                    // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
+                    // record of that country)
+                    totalCumulativeRecovered = currentHighest;   
+                }
+                else
+                {
+                    // Add for all other first menu selection which contains multiple country records
+                    totalCumulativeRecovered += currentHighest;
+                }
             }
         }
         // Check if records exist or not missing then output message 
@@ -754,7 +761,7 @@ public class CovidAnalysis
         String upperCaseGroup = pGroup.toUpperCase();
         int totalCurrentlyPositive = 0;
         int currentHighest = 0;
-        int averageDaily;     
+        float averageDaily;     
 
         // Loop through all elements in array to get the Total Currently Positive of each Country
         for (int i = 0; i < pRecords.length; i++)
@@ -780,19 +787,19 @@ public class CovidAnalysis
                         }
                     }
                 } 
-            }
-
-            // Get total for group selected
-            if (currentCountry.equals(upperCaseGroup))
-            {
-                // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
-                // record of that country)
-                totalCurrentlyPositive = currentHighest;   
-            }
-            else
-            {
-                // Add for all other first menu selection which contains multiple country records
-                totalCurrentlyPositive += currentHighest;
+        
+                // Get total for group selected
+                if (currentCountry.equals(upperCaseGroup))
+                {
+                    // For first menu selection 8 (grouping is for one single country so total cumulative is simply the highest
+                    // record of that country)
+                    totalCurrentlyPositive = currentHighest;   
+                }
+                else
+                {
+                    // Add for all other first menu selection which contains multiple country records
+                    totalCurrentlyPositive += currentHighest;
+                }
             }
         }
         // Check if records exist or not missing then output message 
@@ -803,9 +810,9 @@ public class CovidAnalysis
         else 
         {
             // Get average by dividing with the number of records in given array
-            averageDaily = totalCurrentlyPositive / pNumOfRecords;
+            averageDaily = (float) totalCurrentlyPositive / pNumOfRecords;
 
-            System.out.printf("\nAverage Daily Number of Currently Positive Cases for %s: %d\n", upperCaseGroup, averageDaily);
+            System.out.printf("\nAverage Daily Number of Currently Positive Cases for %s: %d\n", upperCaseGroup, Math.round(averageDaily));
         }
     }   
 
@@ -820,16 +827,17 @@ public class CovidAnalysis
     private static void calcPercentageRecovered(String pGroup, CovidRecord[] pRecords)
     {
         String upperCaseGroup = pGroup.toUpperCase();
-        int totalCumulativePositive, totalCumulativeRecovered, percentageRecovered;
+        int totalCumulativePositive, totalCumulativeRecovered;
+        float percentageRecovered;
 
         // Call methods to get data needed
         totalCumulativePositive = calcCumulativePositive(pGroup, pRecords);
         totalCumulativeRecovered = calcCumulativeRecovered(pGroup, pRecords);
 
         // Calculate the percentage of recovered cases over positive cases
-        percentageRecovered = (totalCumulativeRecovered * 100) / totalCumulativePositive;
+        percentageRecovered = (float) (totalCumulativeRecovered * 100) / totalCumulativePositive;
 
-        System.out.println("\n" + percentageRecovered + "% (" + totalCumulativeRecovered + "/" + totalCumulativePositive +
+        System.out.println("\n" + Math.round(percentageRecovered) + "% (" + totalCumulativeRecovered + "/" + totalCumulativePositive +
                             ") cases recovered for " + upperCaseGroup + ".");
     } 
 
@@ -844,16 +852,17 @@ public class CovidAnalysis
     private static void calcPercentageDeceased(String pGroup, CovidRecord[] pRecords)
     {
         String upperCaseGroup = pGroup.toUpperCase();
-        int totalCumulativePositive, totalCumulativeDeceased, percentageDeceased;
+        int totalCumulativePositive, totalCumulativeDeceased;
+        float percentageDeceased;
 
         // Call methods to get data needed
         totalCumulativePositive = calcCumulativePositive(pGroup, pRecords);
         totalCumulativeDeceased = calcCumulativeDeceased(pGroup, pRecords);
 
         // Calculate the percentage of deceased cases over positive cases
-        percentageDeceased = (totalCumulativeDeceased * 100) / totalCumulativePositive;
+        percentageDeceased = (float) (totalCumulativeDeceased * 100) / totalCumulativePositive;
 
-        System.out.println("\n" + percentageDeceased + "% (" + totalCumulativeDeceased + "/" + totalCumulativePositive +
+        System.out.println("\n" + Math.round(percentageDeceased) + "% (" + totalCumulativeDeceased + "/" + totalCumulativePositive +
                             ") cases deceased for " + upperCaseGroup + ".");
     }   
 
