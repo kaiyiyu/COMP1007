@@ -1,0 +1,218 @@
+-------------------------------------------------------------------------------------------------------
+Author: Kai-Yu Yu
+Purpose: Pseudocode for TaskTwo program
+Date: 06/04/2022
+-------------------------------------------------------------------------------------------------------
+BEGIN TaskTwo 
+    DRIVETOSURVIVE = 10
+    INVENTINGANNA = 9
+    BRIDGERTON = 8
+    MINVIEWS = 100000
+    -------------------------------------------------------------------------------------------------------
+    MAIN:
+        OUTPUT "**********************************************************" +
+               "| Welcome to the Netflix Season Episode Program Analyser |" +
+               "|       The program tracks views per episode of the      |" +
+               "|                 selected series season.                |" +
+               "**********************************************************" +
+               "Data Entry: "
+    
+        ARRAY driveToSurviveArray = enterViews(DRIVETOSURVIVE)
+        ARRAY inventingAnnaArray = enterViews(INVENTINGANNA)
+        ARRAY bridgertonArray = enterViews(BRIDGERTON)
+
+        OUTPUT "===================" +
+               "Data Entry Complete" +
+               "===================" 
+
+        TRY
+            DO
+                OUTPUT "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" +
+                       "Menu Choice:" +
+                       "> 1. Display average view count for each series season;" +
+                       "> 2. Display episode from all series with the highest view count;" +
+                       "> 3. Display the most popular series;" +
+                       "> 4. Display show with largest season finale audience with view count;" +
+                       "> 5. Exit the program" +
+                       "Your choice: " 
+                INPUT choice
+                CASE choice
+                    1: 
+                        OUTPUT "Average View Count for Each Series:" +
+                               "Drive to Survive, season 4: " + averageViewCount(driveToSurviveArray) + " views" +
+                               "Inventing Anna: " + averageViewCount(inventingAnnaArray) + " views" +
+                               "Bridgerton, season 2: " + averageViewCount(bridgertonArray) + " views"
+                    2:
+                        OUTPUT "Highest View Count for all Episodes:" +
+                               highestViewCount(driveToSurviveArray, inventingAnnaArray, bridgertonArray)
+                    3:
+                        OUTPUT "Most Popular Series:" +
+                               mostPopularSeries(driveToSurviveArray, inventingAnnaArray, bridgertonArray)
+                    4:
+                        OUTPUT "Highest Series Finale Views:" +
+                               largestSeasonFinale(driveToSurviveArray, inventingAnnaArray, bridgertonArray)
+                    5:
+                        OUTPUT "Thank you for using the Netflix Season Episode Program Analyser!"
+                    DEFAULT:
+                        OUTPUT "Invalid menu choice. Please enter a number from 1 to 5."
+            WHILE choice != 5
+            ASSERTION: 0 < choice < 6
+        CATCH EXCEPTION Mismatch Input Data Type as exception     
+            OUTPUT "Program will stop executing. Goodbye!"
+    END MAIN     
+    -------------------------------------------------------------------------------------------------------
+    METHOD: enterViews
+    IMPORT: numEpisodes
+    EXPORT: viewCount
+    EXCEPTION: InputMismatchException if not int
+    ALGORITHM:
+        IF (numEpisodes == DRIVETOSURVIVE) THEN
+            OUTPUT "Please enter the view count per episode for Drive to Survive, season 4: "
+        ELSE IF (numEpisodes == INVENTINGANNA) THEN
+            OUTPUT "Please enter the view count per episode for Inventing Anna: "
+        ELSE IF (numEpisodes == BRIDGERTON) THEN
+            OUTPUT "Please enter the view count per episode for Bridgerton, season 2: "
+        ELSE
+            OUTPUT "Invalid episode number. Goodbye!"
+        ENDIF
+
+        ARRAY viewCount OF LENGTH numEpisodes
+
+        FOR (i = 0 TO numEpisodes CHANGEBY 1)
+            OUTPUT "Episode " + (i + 1) + ": "
+            TRY
+                INPUT viewCount[i]
+                
+                IF (viewCount[i] < MINVIEWS) THEN
+                    viewCount[i] = 1
+                ENDIF
+            CATCH EXCEPTION Mismatch Input Data Type as exception
+                OUTPUT "Try again. Please enter an integer less than " + Integer.MAX_VALUE + "."
+                INPUT
+                DECREMENT i BY 1
+            printViews(viewCount)
+        
+        RETURN viewCount
+    END enterViews
+    -------------------------------------------------------------------------------------------------------
+    METHOD: printViews
+    IMPORT: viewCount 
+    EXPORT: none
+    ALGORITHM:
+        OUTPUT "Summary of Views per Episode"
+
+        FOR (i = 0 TO LENGTH OF viewCount CHANGEBY 1)
+            OUTPUT "Episode " + (i + 1) + ": " + viewCount[i] + " views"
+        ENDFOR
+    END printViews
+    -------------------------------------------------------------------------------------------------------
+    METHOD: averageViewCount
+    IMPORT: seriesArray 
+    EXPORT: average
+    ALGORITHM:
+        average = 0
+
+        FOR (i = 0 TO LENGTH OF seriesArray CHANGEBY 1)
+            average += seriesArray[i]
+        ENDFOR
+
+        average = average / LENGTH OF seriesArray
+
+        RETURN average
+    END averageViewCount
+    -------------------------------------------------------------------------------------------------------
+    METHOD: highestViewCount
+    IMPORT: driveToSurviveArray, inventingAnnaArray, bridgertonArray
+    EXPORT: highestResult
+    ALGORITHM:
+        driveEpisode = 0
+        inventingEpisode = 0
+        bridgertonEpisode = 0
+        maxDriveToSurvive = driveToSurviveArray[0]
+        maxInventingAnna = inventingAnnaArray[0]
+        maxBridgerton = bridgertonArray[0]
+        
+        FOR (i = 1 TO DRIVETOSURVIVE CHANGEBY 1)
+            IF (driveToSurviveArray[i] > maxDriveToSurvive) THEN
+                maxDriveToSurvive = driveToSurviveArray[i]
+                driveEpisode = i + 1
+            ENDIF
+        ENDFOR
+        
+        FOR (i = 1 TO INVENTINGANNA CHANGEBY 1)
+            IF (inventingAnnaArray[i] > maxInventingAnna) THEN
+                maxInventingAnna = inventingAnnaArray[i]
+                inventingEpisode = i + 1
+            ENDIF
+        ENDFOR
+       
+        FOR (i = 1 TO BRIDGERTON CHANGEBY 1)
+            IF (bridgertonArray[i] > maxBridgerton) THEN
+                maxBridgerton = bridgertonArray[i]
+                bridgertonEpisode = i + 1
+            ENDIF
+        ENDFOR
+            
+        IF (maxDriveToSurvive >= maxInventingAnna AND maxDriveToSurvive >= maxBridgerton) THEN
+            highestResult = "Drive to Survive, season 4, episode " + driveEpisode + ": " + maxDriveToSurvive 
+        ELSE IF (maxInventingAnna >= maxDriveToSurvive AND maxInventingAnna >= maxBridgerton) THEN
+            highestResult = "Inventing Anna episode " + inventingEpisode + ": " + maxInventingAnna        
+        ELSE
+            highestResult = "Bridgerton, season 2 episode " + bridgertonEpisode + ": " + maxBridgerton
+        ENDIF
+
+        RETURN highestResult
+    END highestViewCount
+    -------------------------------------------------------------------------------------------------------
+    METHOD: mostPopularSeries
+    IMPORT: driveToSurviveArray, inventingAnnaArray, bridgertonArray
+    EXPORT: mostPopularResult
+    ALGORITHM: 
+        totalDrivetoSurvive = 0
+        totalInventingAnna = 0
+        totalBridgerton = 0
+
+        FOR (i = 0 TO DRIVETOSURVIVE CHANGEBY 1) 
+            totalDrivetoSurvive += driveToSurviveArray[i]  
+        ENDFOR
+
+        FOR (i = 0 TO INVENTINGANNA CHANGEBY 1)  
+            totalInventingAnna += inventingAnnaArray[i]
+        ENDFOR 
+
+        FOR (i = 0 TO BRIDGERTON CHANGEBY 1)  
+            totalBridgerton += bridgertonArray[i]
+        ENDFOR 
+
+        IF (totalDrivetoSurvive >= totalInventingAnna AND totalDrivetoSurvive >= totalBridgerton) THEN
+            mostPopularResult = "Drive to Survive series total: " + totalDrivetoSurvive
+        ELSE IF (totalInventingAnna >= totalDrivetoSurvive AND totalInventingAnna >= totalBridgerton) THEN
+            mostPopularResult = "Inventing Anna series total: " + totalInventingAnna
+        ELSE
+            mostPopularResult = "Bridgerton series total: " + totalBridgerton
+        ENDIF
+
+        RETURN mostPopularResult
+    END mostPopularSeries
+    -------------------------------------------------------------------------------------------------------
+    METHOD: largestSeasonFinale    
+    IMPORT: driveToSurviveArray, inventingAnnaArray, bridgertonArray
+    EXPORT: largestFinaleResult 
+    ALGORITHM:
+        finalDriveToSurvive = driveToSurviveArray[DRIVETOSURVIVE - 1]
+        finalInventingAnna = inventingAnnaArray[INVENTINGANNA - 1]
+        finalBridgerton = bridgertonArray[BRIDGERTON - 1]
+
+        IF (finalDriveToSurvive >= finalInventingAnna AND finalDriveToSurvive >= finalBridgerton) THEN
+            largestFinaleResult = "Drive to Survive view count: " + finalDriveToSurvive
+        ELSE IF (finalInventingAnna >= finalDriveToSurvive AND finalInventingAnna >= finalBridgerton) THEN
+            largestFinaleResult = "Inventing Anna view count: " + finalInventingAnna
+        ELSE
+            largestFinaleResult = "Bridgerton view count: " + finalBridgerton
+        ENDIF
+
+        RETURN largestFinaleResult
+    END largestSeasonFinale
+    --------------------------------------------------------------------------------------------------------
+END PROGRAM
+--------------------------------------------------------------------------------------------------------
